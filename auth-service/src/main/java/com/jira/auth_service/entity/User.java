@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -33,6 +34,14 @@ public class User {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Column(name = "role")
+    private Set<String> roles; // USER, ADMIN
 
     @PrePersist
     void onCreate() {

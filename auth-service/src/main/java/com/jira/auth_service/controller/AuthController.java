@@ -3,11 +3,15 @@ package com.jira.auth_service.controller;
 import com.jira.auth_service.dto.request.*;
 import com.jira.auth_service.dto.response.AuthResponse;
 import com.jira.auth_service.dto.response.IdentifyResponse;
+import com.jira.auth_service.entity.User;
 import com.jira.auth_service.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")

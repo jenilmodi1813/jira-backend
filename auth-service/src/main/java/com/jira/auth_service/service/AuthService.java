@@ -3,8 +3,11 @@ package com.jira.auth_service.service;
 import com.jira.auth_service.dto.request.*;
 import com.jira.auth_service.dto.response.AuthResponse;
 import com.jira.auth_service.dto.response.IdentifyResponse;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
-import org.jspecify.annotations.Nullable;
+//import org.jspecify.annotations.Nullable;
+
+import java.util.UUID;
 
 public interface AuthService {
     IdentifyResponse identify(IdentifyRequest request);
@@ -15,5 +18,10 @@ public interface AuthService {
 
     void logout(String token);
 
-    @Nullable AuthResponse verifyLoginOtp(@Valid VerifyLoginOtpRequest request);
+    @Nullable
+    AuthResponse verifyLoginOtp(@Valid VerifyLoginOtpRequest request);
+
+    void createAdmin(String email);
+
+    void promoteToAdmin(UUID userId);
 }

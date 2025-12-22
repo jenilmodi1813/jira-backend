@@ -35,4 +35,23 @@ public class EmailServiceImpl implements EmailService {
 
         mailSender.send(message);
     }
+    @Override
+    public void sendOrganizationInviteEmail(String to, String inviteLink) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("You're invited to join a Jira organization");
+        message.setText("""
+        Hello 👋
+
+        You’ve been invited to join a Jira organization.
+
+        Click below to accept the invitation:
+        %s
+
+        This invite will expire in 48 hours.
+        """.formatted(inviteLink));
+
+        mailSender.send(message);
+    }
 }

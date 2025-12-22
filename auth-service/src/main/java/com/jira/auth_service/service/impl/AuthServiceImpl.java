@@ -1,6 +1,7 @@
 package com.jira.auth_service.service.impl;
 
 import com.jira.auth_service.dto.event.UserSignupEvent;
+import com.jira.auth_service.dto.event.UserVerifiedEvent;
 import com.jira.auth_service.dto.request.*;
 import com.jira.auth_service.dto.response.AuthResponse;
 import com.jira.auth_service.dto.response.IdentifyResponse;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -74,6 +76,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = User.builder()
                 .email(request.email())
+                .roles(Set.of("USER"))
                 .isVerified(false)
                 .isActive(true)
                 .build();
@@ -89,7 +92,7 @@ public class AuthServiceImpl implements AuthService {
 
         tokenRepo.save(token);
 
-        // 🔥 PUBLISH EVENT TO RABBITMQ
+        //  PUBLISH EVENT TO RABBITMQ
         eventPublisher.publish(
                 new UserSignupEvent(
                         user.getId(),
@@ -120,6 +123,14 @@ public class AuthServiceImpl implements AuthService {
 
         token.setUsed(true);
         tokenRepo.save(token);
+
+        //  PUBLISH VERIFIED EVENT
+        eventPublisher.publishUserVerified(
+                new UserVerifiedEvent(
+                        user.getId(),
+                        user.getEmail()
+                )
+        );
     }
 
     // Login
@@ -181,7 +192,7 @@ public class AuthServiceImpl implements AuthService {
         tokenRepo.save(token);
 
         //  ISSUE JWT HERE
-        String accessToken = jwtService.generateAccessToken(user.getId().toString());
+        String accessToken = jwtService.generateAccessToken(user.getId().toString(),user.getRoles());
         String refreshToken = jwtService.generateRefreshToken(user.getId().toString());
 
         refreshRepo.save(
@@ -207,7 +218,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         var user = refreshToken.getUser();
-        String newAccessToken = jwtService.generateAccessToken(user.getId().toString());
+        String newAccessToken = jwtService.generateAccessToken(user.getId().toString(),user.getRoles());
 
         return new AuthResponse(newAccessToken, refreshToken.getToken());
     }
@@ -224,6 +235,30 @@ public class AuthServiceImpl implements AuthService {
         var refreshTokens = refreshRepo.findAllByUser(user);
         refreshTokens.forEach(token -> token.setRevoked(true));
         refreshRepo.saveAll(refreshTokens);
+    }
+
+    @Transactional
+    public void createAdmin(String email) {
+
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.getRoles().add("ADMIN");
+        userRepo.save(user);
+    }
+
+    @Transactional
+    public void promoteToAdmin(UUID userId) {
+
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getRoles().contains("ADMIN")) {
+            return; // already admin
+        }
+
+        user.getRoles().add("ADMIN");
+        userRepo.save(user);
     }
 }
 
