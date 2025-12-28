@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/internal/**").hasRole("ADMIN")
                         .requestMatchers("/api/users/profile/find-by-email").permitAll()
+                        .requestMatchers("/api/users/profile/find-by-email").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->

@@ -93,7 +93,7 @@ public class UserProfileController {
      * ADMIN ONLY
      * Internal / admin lookup
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/{authUserId}")
     public ResponseEntity<UserProfileResponse> getProfileById(
             @PathVariable UUID authUserId) {

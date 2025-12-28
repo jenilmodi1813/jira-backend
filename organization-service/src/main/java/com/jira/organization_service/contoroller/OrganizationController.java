@@ -1,6 +1,7 @@
 package com.jira.organization_service.contoroller;
 
 import com.jira.organization_service.dtos.request.CreateOrganizationRequest;
+import com.jira.organization_service.dtos.response.OrganizationMemberResponse;
 import com.jira.organization_service.dtos.response.OrganizationResponse;
 import com.jira.organization_service.service.OrganizationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,5 +40,15 @@ public class OrganizationController {
         }
 
         return service.myOrganizations(userId);
+    }
+
+    @GetMapping("/{orgId}/members")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public List<OrganizationMemberResponse> members(
+            @PathVariable UUID orgId,
+            HttpServletRequest http) {
+
+        UUID userId = (UUID) http.getAttribute("authUserId");
+        return service.getMembers(orgId, userId);
     }
 }

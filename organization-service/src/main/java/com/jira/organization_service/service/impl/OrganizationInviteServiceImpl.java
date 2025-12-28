@@ -142,6 +142,7 @@ public class OrganizationInviteServiceImpl implements OrganizationInviteService 
 
         invite.setStatus(InviteStatus.ACCEPTED);
         inviteRepo.save(invite);
+        System.out.println("INVITE ACCEPT");
     }
 
     @Override
@@ -166,6 +167,7 @@ public class OrganizationInviteServiceImpl implements OrganizationInviteService 
         //  REJECT
         invite.setStatus(InviteStatus.REJECTED);
         inviteRepo.save(invite);   // ⚠ THIS WAS LIKELY MISSING
+        System.out.println("INVITE ACCEPT");
     }
 
 }
