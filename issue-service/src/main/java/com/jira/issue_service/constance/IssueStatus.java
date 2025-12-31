@@ -1,8 +1,9 @@
 package com.jira.issue_service.constance;
 
 public enum IssueStatus {
-    TODO,
+    TO_DO,
+    In_Review,
     IN_PROGRESS,
-    DONE,
-    BLOCKED
+    In_Testing,
+    DONE
 }

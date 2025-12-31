@@ -1,9 +1,7 @@
 package com.jira.issue_service.controller;
 
-import com.jira.issue_service.dto.request.CreateIssueRequest;
-import com.jira.issue_service.dto.request.CreateSubTaskRequest;
-import com.jira.issue_service.dto.request.MoveIssueRequest;
-import com.jira.issue_service.dto.request.UpdateIssueRequest;
+import com.jira.issue_service.dto.request.UpdateIssueDescriptionRequest;
+import com.jira.issue_service.dto.request.*;
 import com.jira.issue_service.dto.response.IssueResponse;
 import com.jira.issue_service.service.IssueService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,7 +54,8 @@ public class IssueController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public void delete(@PathVariable UUID id) {
         service.delete(id);
     }
@@ -77,6 +76,23 @@ public class IssueController {
             @RequestBody MoveIssueRequest request) {
 
         return service.move(id, request.columnId());
+    }
+
+    @PatchMapping("/{id}/title")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public IssueResponse updateTitle(
+            @PathVariable UUID id,
+            @RequestBody UpdateIssueTitleRequest request) {
+
+        return service.updateTitle(id, request.title());
+    }
+
+    @PatchMapping("/{id}/description")
+    public IssueResponse updateDescription(
+            @PathVariable UUID id,
+            @RequestBody UpdateIssueDescriptionRequest request) {
+
+        return service.updateDescription(id, request.description());
     }
 }
 

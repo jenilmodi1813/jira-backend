@@ -5,6 +5,7 @@ import com.jira.issue_service.dto.request.CreateSubTaskRequest;
 import com.jira.issue_service.dto.request.UpdateIssueRequest;
 import com.jira.issue_service.dto.response.IssueResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
@@ -24,4 +25,8 @@ public interface IssueService {
     IssueResponse createSubTask(UUID parentIssueId, @Valid CreateSubTaskRequest request);
 
     IssueResponse move(UUID id, @NotNull UUID uuid);
+
+    IssueResponse updateTitle(UUID id, @NotBlank String title);
+
+    IssueResponse updateDescription(UUID id, @NotBlank String description);
 }

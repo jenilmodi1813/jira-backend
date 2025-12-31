@@ -122,7 +122,7 @@ public class IssueServiceImpl implements IssueService {
                 .description(req.description())
                 .priority(req.priority())
                 .status("TODO")
-                .assigneeId(req.assigneeId())
+                .assigneeId(parent.getAssigneeId())
                 .reporterId(parent.getReporterId())
                 .build();
 
@@ -139,7 +139,7 @@ public class IssueServiceImpl implements IssueService {
                 .orElseThrow(() -> new ResourceNotFoundException("Issue not found"));
 
         BoardColumnResponse column = boardClient.getById(columnId);
-
+        System.out.println(column.toString());
         //  SAME BOARD CHECK
 //        if (!fromColumn.boardId().equals(toColumn.boardId())) {
 //            throw new BadRequest("Cannot move issue across boards");
@@ -149,7 +149,29 @@ public class IssueServiceImpl implements IssueService {
 //        validateTransition(fromColumn, toColumn);
 
         issue.setBoardColumnId(columnId);
+        issue.setStatus(column.name());
+        System.out.println(column.name());
         issue.setUpdatedAt(LocalDateTime.now());
+
+        return map(repo.save(issue));
+    }
+
+    @Override
+    public IssueResponse updateTitle(UUID issueId, String title) {
+
+        Issue issue = repo.findById(issueId)
+                .orElseThrow(() -> new ResourceNotFoundException("Issue not found"));
+        issue.setTitle(title);
+
+        return map(repo.save(issue));
+    }
+
+    @Override
+    public IssueResponse updateDescription(UUID issueId, String description) {
+
+        Issue issue = repo.findById(issueId)
+                .orElseThrow(() -> new ResourceNotFoundException("Issue not found"));
+        issue.setDescription(description);
 
         return map(repo.save(issue));
     }
