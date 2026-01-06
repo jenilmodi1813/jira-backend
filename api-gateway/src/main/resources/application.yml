@@ -1,0 +1,38 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+
+        - id: organization-service
+          uri: lb://organization-service
+          predicates:
+            - Path=/api/organizations/**
+
+        - id: project-service
+          uri: lb://project-service
+          predicates:
+            - Path=/api/projects/**
+
+        - id: board-service
+          uri: lb://board-service
+          predicates:
+            - Path=/api/boards/**
+
+        - id: issue-service
+          uri: lb://issue-service
+          predicates:
+            - Path=/api/issues/**

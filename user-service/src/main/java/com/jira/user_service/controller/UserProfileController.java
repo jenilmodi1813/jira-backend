@@ -32,7 +32,7 @@ public class UserProfileController {
     public ResponseEntity<UserProfileResponse> getMyProfile(HttpServletRequest request) {
 
         UUID authUserId = (UUID) request.getAttribute("authUserId");
-
+        System.out.println("Auther_Id:: "+authUserId);
         return ResponseEntity.ok(
                 userProfileService.findById(authUserId)
         );
